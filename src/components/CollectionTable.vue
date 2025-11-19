@@ -60,46 +60,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
+import { storeToRefs } from 'pinia'
+import { useCmsStore } from '../stores/cms'
 import Footer from './Footer.vue';
 import HeaderBar from './HeaderBar.vue';
 
-const totalRecords = ref(150)
-const currentPage = ref(1)
-const itemsPerPage = ref(10)
+const store = useCmsStore()
+const { items, fields, pagination } = storeToRefs(store)
+const { setPage, setItemsPerPage } = store
 
-const fields = [
-  { key: 'name', label: 'Name', minWidth: 'min-w-[200px]' },
-  { key: 'address', label: 'Address', minWidth: 'min-w-[250px]' },
-  { key: 'email', label: 'Email', minWidth: 'min-w-[200px]' },
-  { key: 'phone', label: 'Phone', minWidth: 'min-w-[150px]' },
-  { key: 'website', label: 'Website', minWidth: 'min-w-[200px]' },
-  { key: 'status', label: 'Status', minWidth: 'min-w-[120px]' },
-  { key: 'category', label: 'Category', minWidth: 'min-w-[150px]' },
-  { key: 'rating', label: 'Rating', minWidth: 'min-w-[100px]' },
-  { key: 'description', label: 'Description', minWidth: 'min-w-[300px]' },
-  { key: 'tags', label: 'Tags', minWidth: 'min-w-[200px]' },
-  { key: 'createdAt', label: 'Created At', minWidth: 'min-w-[180px]' },
-  { key: 'updatedAt', label: 'Updated At', minWidth: 'min-w-[180px]' },
-]
+// Computed properties for v-model binding to store state
+import { computed } from 'vue'
 
-const items = Array.from({ length: 50 }).map((_, i) => ({
-  id: i + 1,
-  name: 'Restaurant ' + (i + 1),
-  address: 'Street ' + (i + 1) + ', City, Country',
-  email: `contact${i + 1}@example.com`,
-  phone: `+1 555 01${(i + 1).toString().padStart(2, '0')}`,
-  website: `www.restaurant${i + 1}.com`,
-  status: Math.random() > 0.5 ? 'Active' : 'Inactive',
-  category: ['Italian', 'Chinese', 'Mexican', 'Indian', 'American'][Math.floor(Math.random() * 5)],
-  rating: (Math.random() * 5).toFixed(1),
-  description: 'A wonderful place to dine with family and friends. Enjoy our delicious meals prepared by top chefs.',
-  tags: 'Dining, Family, Casual',
-  createdAt: new Date().toLocaleDateString(),
-  updatedAt: new Date().toLocaleDateString(),
-}))
+const currentPage = computed({
+  get: () => pagination.value.currentPage,
+  set: (val) => setPage(val)
+})
 
+const itemsPerPage = computed({
+  get: () => pagination.value.itemsPerPage,
+  set: (val) => setItemsPerPage(val)
+})
+
+const totalRecords = computed(() => pagination.value.totalRecords)
 </script>
 
 
@@ -119,7 +102,7 @@ const items = Array.from({ length: 50 }).map((_, i) => ({
   border-radius: 3px;
 }
 
-::-webkit-scrollbar-:hover {
+::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 </style>
