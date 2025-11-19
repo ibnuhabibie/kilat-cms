@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { useCmsStore } from '../stores/cms'
+import { useCmsStore } from '../../stores/cms'
 import { storeToRefs } from 'pinia'
 
 const store = useCmsStore()

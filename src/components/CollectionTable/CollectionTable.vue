@@ -1,5 +1,5 @@
 <template>
-  <HeaderBar />
+  <CollectionHeader />
   <!-- Scrollable Data Area -->
   <div class="flex-1 overflow-auto">
     <table class="min-w-full bg-white text-sm">
@@ -56,14 +56,15 @@
   </div>
 
   <!-- Sticky Footer Pagination -->
-  <Footer :totalRecords="totalRecords" v-model:currentPage="currentPage" v-model:itemsPerPage="itemsPerPage" />
+  <CollectionFooter :totalRecords="totalRecords" v-model:currentPage="currentPage"
+    v-model:itemsPerPage="itemsPerPage" />
 </template>
 
 <script setup>
 import { storeToRefs } from 'pinia'
-import { useCmsStore } from '../stores/cms'
-import Footer from './Footer.vue';
-import HeaderBar from './HeaderBar.vue';
+import { useCmsStore } from '../../stores/cms'
+import CollectionFooter from './CollectionFooter.vue';
+import CollectionHeader from './CollectionHeader.vue';
 
 const store = useCmsStore()
 const { items, fields, pagination } = storeToRefs(store)
