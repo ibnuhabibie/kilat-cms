@@ -8,9 +8,23 @@
                 <!-- Modal Content -->
                 <Transition name="slide">
                     <div v-if="isOpen" :class="modalClasses">
-                        <!-- Header Slot (Optional) -->
-                        <div v-if="$slots.header" class="flex-shrink-0">
-                            <slot name="header" :close="handleClose" />
+                        <!-- Header (Built-in or Slot) -->
+                        <div v-if="title || $slots.header" class="flex-shrink-0">
+                            <!-- Custom Header Slot -->
+                            <slot v-if="$slots.header" name="header" :close="handleClose" />
+
+                            <!-- Built-in Header (if title provided and no custom header) -->
+                            <div v-else
+                                class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-800">{{ title }}</h2>
+                                    <p v-if="subtitle" class="text-sm text-slate-500 mt-0.5">{{ subtitle }}</p>
+                                </div>
+                                <button v-if="showClose" @click="handleClose"
+                                    class="p-2 hover:bg-slate-200 rounded-lg transition-colors text-slate-600">
+                                    <IconX :size="20" />
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Default Slot (Main Content) -->
@@ -19,7 +33,7 @@
                         </div>
 
                         <!-- Footer Slot (Optional) -->
-                        <div v-if="$slots.footer" class="flex-shrink-0">
+                        <div v-if="$slots.footer" class="flex-shrink-0 px-6 py-4 border-t border-slate-200 bg-slate-50">
                             <slot name="footer" :close="handleClose" />
                         </div>
                     </div>
@@ -31,11 +45,24 @@
 
 <script setup>
 import { computed } from 'vue'
+import { IconX } from '@tabler/icons-vue'
 
 const props = defineProps({
     isOpen: {
         type: Boolean,
         default: false
+    },
+    title: {
+        type: String,
+        default: ''
+    },
+    subtitle: {
+        type: String,
+        default: ''
+    },
+    showClose: {
+        type: Boolean,
+        default: true
     },
     position: {
         type: String,
