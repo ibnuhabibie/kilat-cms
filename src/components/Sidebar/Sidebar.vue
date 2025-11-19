@@ -37,13 +37,17 @@
 
     <!-- Footer - New Collection Button -->
     <div class="h-16 flex items-center px-4 border-t border-slate-200 bg-white">
-      <button
+      <button @click="openModal()"
         class="w-full py-2.5 px-4 rounded-xl bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-slate-900/20 flex items-center justify-center gap-2 group">
         <IconPlus :size="16" class="transition-transform group-hover:rotate-90" />
         New Collection
       </button>
     </div>
   </div>
+
+  <!-- Collection Management Modal -->
+  <CollectionManageModal :isOpen="isModalOpen" :collection="selectedCollection" @close="closeModal" @save="handleSave"
+    @truncate="handleTruncate" @duplicate="handleDuplicate" @delete="handleDelete" />
 </template>
 
 <script setup>
@@ -52,11 +56,14 @@ import { useRoute } from 'vue-router'
 import { useCmsStore } from '../../stores/cms'
 import { storeToRefs } from 'pinia'
 import { IconSearch, IconChevronRight, IconPlus } from '@tabler/icons-vue'
+import CollectionManageModal from '../CollectionManageModal/CollectionManageModal.vue'
 
 const route = useRoute()
 const store = useCmsStore()
 const { collections } = storeToRefs(store)
 const searchQuery = ref('')
+const isModalOpen = ref(false)
+const selectedCollection = ref(null)
 
 const filteredCollections = computed(() => {
   if (!searchQuery.value) return collections.value
@@ -69,24 +76,38 @@ const filteredCollections = computed(() => {
 const isActive = (item) => {
   return route.params.collectionName === item.name
 }
+
+function openModal(collection = null) {
+  selectedCollection.value = collection
+  isModalOpen.value = true
+}
+
+function closeModal() {
+  isModalOpen.value = false
+  selectedCollection.value = null
+}
+
+function handleSave(collectionData) {
+  console.log('Save collection:', collectionData)
+  // TODO: Implement save logic
+  // store.saveCollection(collectionData)
+}
+
+function handleTruncate(collectionData) {
+  console.log('Truncate collection:', collectionData)
+  // TODO: Implement truncate logic
+  // store.truncateCollection(collectionData.name)
+}
+
+function handleDuplicate(collectionData) {
+  console.log('Duplicate collection:', collectionData)
+  // TODO: Implement duplicate logic
+  // store.duplicateCollection(collectionData)
+}
+
+function handleDelete(collectionData) {
+  console.log('Delete collection:', collectionData)
+  // TODO: Implement delete logic
+  // store.deleteCollection(collectionData.name)
+}
 </script>
-
-<style scoped>
-/* Custom scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-</style>
