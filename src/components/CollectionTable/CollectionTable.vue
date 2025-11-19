@@ -37,16 +37,10 @@
             class="p-3 bg-white border-l border-slate-200 sticky right-0 z-20 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.05)]">
             <div class="flex items-center justify-center space-x-2">
               <button class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
+                <IconEdit :size="16" />
               </button>
               <button class="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
+                <IconTrash :size="16" />
               </button>
             </div>
           </td>
@@ -65,6 +59,7 @@ import { storeToRefs } from 'pinia'
 import { useCmsStore } from '../../stores/cms'
 import CollectionFooter from './CollectionFooter.vue';
 import CollectionHeader from './CollectionHeader.vue';
+import { IconEdit, IconTrash } from '@tabler/icons-vue'
 
 const store = useCmsStore()
 const { items, fields, pagination } = storeToRefs(store)
