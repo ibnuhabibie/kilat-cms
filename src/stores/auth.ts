@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import http from '../utils/http'
 
 export interface User {
     id: string
@@ -30,29 +31,38 @@ export const useAuthStore = defineStore('auth', () => {
         error.value = null
 
         try {
-            // Simulate API call - replace with actual API call to your backend
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            const response = await http.post('/auth/sign-in/email', {
+                email,
+                password,
+            })
 
-            // Mock validation - replace with actual API validation
-            if (email === 'admin@kilat.com' && password === 'password') {
-                const mockSession: Session = {
-                    user: {
-                        id: '1',
-                        email: email,
-                        name: 'Admin User',
-                        avatar: 'https://ui-avatars.com/api/?name=Admin+User&background=3b82f6&color=fff'
-                    },
-                    token: 'mock-jwt-token-' + Date.now(),
-                    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-                }
+            const data = response.data
 
-                session.value = mockSession
-                localStorage.setItem('kilat-session', JSON.stringify(mockSession))
-                return { success: true }
-            } else {
-                throw new Error('Invalid email or password')
+            // Handle response structure
+            const user = data.user || data
+            const sessionData = data.session || data
+            const token = sessionData.token || data.token
+
+            if (!user || !token) {
+                throw new Error('Invalid response from server')
             }
+
+            const newSession: Session = {
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    avatar: user.image || user.avatar
+                },
+                token: token,
+                expiresAt: sessionData.expiresAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            }
+
+            session.value = newSession
+            localStorage.setItem('kilat-session', JSON.stringify(newSession))
+            return { success: true }
         } catch (err) {
+            console.error('Login error:', err)
             error.value = err instanceof Error ? err.message : 'Login failed'
             return { success: false, error: error.value }
         } finally {
@@ -60,7 +70,57 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    async function register(name: string, email: string, password: string) {
+        isLoading.value = true
+        error.value = null
+
+        try {
+            const response = await http.post('/auth/sign-up/email', {
+                name,
+                email,
+                password,
+            })
+
+            const data = response.data
+
+            const user = data.user || data
+            const sessionData = data.session || data
+            const token = sessionData.token || data.token
+
+            if (!user || !token) {
+                throw new Error('Invalid response from server')
+            }
+
+            const newSession: Session = {
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    avatar: user.image || user.avatar
+                },
+                token: token,
+                expiresAt: sessionData.expiresAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            }
+
+            session.value = newSession
+            localStorage.setItem('kilat-session', JSON.stringify(newSession))
+            return { success: true }
+        } catch (err) {
+            console.error('Registration error:', err)
+            error.value = err instanceof Error ? err.message : 'Registration failed'
+            return { success: false, error: error.value }
+        } finally {
+            isLoading.value = false
+        }
+    }
+
     async function logout() {
+        try {
+            await http.post('/auth/sign-out')
+        } catch (e) {
+            console.error('Logout API call failed', e)
+        }
+
         session.value = null
         localStorage.removeItem('kilat-session')
         error.value = null
@@ -96,12 +156,6 @@ export const useAuthStore = defineStore('auth', () => {
         const restored = restoreSession()
 
         if (restored && session.value) {
-            // Optionally validate session with backend
-            // const isValid = await validateSessionWithBackend(session.value.token)
-            // if (!isValid) {
-            //     logout()
-            //     return false
-            // }
             return true
         }
 
@@ -120,6 +174,7 @@ export const useAuthStore = defineStore('auth', () => {
 
         // Actions
         login,
+        register,
         logout,
         restoreSession,
         checkAuth

@@ -7,13 +7,32 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl shadow-lg mb-4">
                     <span class="text-white font-bold text-2xl">K</span>
                 </div>
-                <h1 class="text-3xl font-bold text-slate-800 mb-2">Welcome to Kilat CMS</h1>
-                <p class="text-slate-600">Sign in to manage your content</p>
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">Create Your Account</h1>
+                <p class="text-slate-600">Join Kilat CMS to manage your content</p>
             </div>
 
-            <!-- Login Card -->
+            <!-- Register Card -->
             <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
-                <form @submit.prevent="handleLogin" class="space-y-6">
+                <form @submit.prevent="handleRegister" class="space-y-6">
+                    <!-- Name Input -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-slate-700 mb-2">
+                            Full Name
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
+                            <input id="name" v-model="name" type="text" required autocomplete="name"
+                                class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                :class="{ 'border-red-300 focus:ring-red-500': error }" placeholder="John Doe" />
+                        </div>
+                    </div>
+
                     <!-- Email Input -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-slate-700 mb-2">
@@ -29,7 +48,8 @@
                             </div>
                             <input id="email" v-model="email" type="email" required autocomplete="email"
                                 class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                :class="{ 'border-red-300 focus:ring-red-500': error }" placeholder="admin@kilat.com" />
+                                :class="{ 'border-red-300 focus:ring-red-500': error }"
+                                placeholder="john@example.com" />
                         </div>
                     </div>
 
@@ -47,9 +67,10 @@
                                 </svg>
                             </div>
                             <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'" required
-                                autocomplete="current-password"
+                                autocomplete="new-password"
                                 class="w-full pl-10 pr-12 py-3 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                :class="{ 'border-red-300 focus:ring-red-500': error }" placeholder="••••••••" />
+                                :class="{ 'border-red-300 focus:ring-red-500': error }" placeholder="••••••••"
+                                minlength="8" />
                             <button type="button" @click="showPassword = !showPassword"
                                 class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
                                 <svg v-if="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor"
@@ -65,6 +86,7 @@
                                 </svg>
                             </button>
                         </div>
+                        <p class="mt-1 text-xs text-slate-500">Must be at least 8 characters</p>
                     </div>
 
                     <!-- Error Message -->
@@ -78,16 +100,15 @@
                         <span class="text-sm">{{ error }}</span>
                     </div>
 
-                    <!-- Remember Me -->
-                    <div class="flex items-center justify-between">
-                        <label class="flex items-center">
-                            <input type="checkbox" v-model="rememberMe"
-                                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0" />
-                            <span class="ml-2 text-sm text-slate-600">Remember me</span>
-                        </label>
-                        <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                            Forgot password?
-                        </a>
+                    <!-- Success Message -->
+                    <div v-if="success"
+                        class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-start gap-3">
+                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-sm">{{ success }}</span>
                     </div>
 
                     <!-- Submit Button -->
@@ -100,17 +121,15 @@
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                             </path>
                         </svg>
-                        <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
+                        <span>{{ isLoading ? 'Creating account...' : 'Create Account' }}</span>
                     </button>
                 </form>
             </div>
 
             <!-- Footer -->
             <div class="text-center mt-6 text-sm text-slate-600">
-                Don't have an account?
-                <router-link to="/register" class="text-blue-600 hover:text-blue-700 font-medium">
-                    Sign up
-                </router-link>
+                Already have an account?
+                <router-link to="/login" class="text-blue-600 hover:text-blue-700 font-medium">Sign in</router-link>
             </div>
         </div>
     </div>
@@ -124,25 +143,29 @@ import { useAuthStore } from '../stores/auth'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const email = ref('ibnu@kilat.com')
-const password = ref('JagoanKoding')
+const name = ref('')
+const email = ref('')
+const password = ref('')
 const showPassword = ref(false)
-const rememberMe = ref(true)
 const error = ref<string | null>(null)
+const success = ref<string | null>(null)
 const isLoading = ref(false)
 
-async function handleLogin() {
+async function handleRegister() {
     error.value = null
+    success.value = null
     isLoading.value = true
 
-    const result = await authStore.login(email.value, password.value)
+    const result = await authStore.register(name.value, email.value, password.value)
 
     if (result.success) {
-        // Redirect to the collections page or dashboard
-        const redirect = router.currentRoute.value.query.redirect as string
-        router.push(redirect || '/collections/blog-posts')
+        success.value = 'Account created successfully! Redirecting...'
+        // Redirect to collections page after a short delay
+        setTimeout(() => {
+            router.push('/collections/blog-posts')
+        }, 1500)
     } else {
-        error.value = result.error || 'Login failed. Please try again.'
+        error.value = result.error || 'Registration failed. Please try again.'
     }
 
     isLoading.value = false
